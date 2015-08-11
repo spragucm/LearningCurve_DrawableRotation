@@ -24,6 +24,7 @@ public class RotateableDrawableView extends FrameLayout{
 	private ObjectAnimator mAnimator;
 	private int mAlpha = 255;
 	private float mTheta = 0;
+	private float mHeightAbove = -80;
 	
 	private List<RectF> mRectangles = new ArrayList<RectF>();
 	private List<Paint> mPaints = new ArrayList<Paint>();
@@ -51,7 +52,7 @@ public class RotateableDrawableView extends FrameLayout{
 		mMatrix = new Matrix();
 		
 		float width = 600;
-		float num = 75;
+		float num = 100;
 		float recWidth = width / num;
 		float left = 0;
 		float right = left + recWidth;
@@ -80,20 +81,35 @@ public class RotateableDrawableView extends FrameLayout{
 		mAnimator = ObjectAnimator.ofFloat(this, "value", 1.0f, 0.0f);
 		mAnimator.setRepeatCount(ObjectAnimator.INFINITE);
 		mAnimator.setRepeatMode(ObjectAnimator.REVERSE);
-		mAnimator.setDuration(500);	
+		mAnimator.setDuration(1000);	
 		mAnimator.start();
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		Log.d("Rot","onDraw drawRect");
-		
+				
 		for(int i = 0; i < mRectangles.size(); i++){			
+						
 			mPaints.get(i).setAlpha(mAlpha);
+			//canvas.save();
+			//canvas.rotate(mTheta + i*2, (mRectangles.get(i).left + mRectangles.get(i).right)/2.0f, (mRectangles.get(i).top + mRectangles.get(i).bottom)/2.0f);
+		
+			
+			
+			mCamera.save();
+			mCamera.setLocation(0, 0, -mHeightAbove);
+			mCamera.rotate(mTheta + i*2, mTheta + i*2, mTheta + i*2);
+			mCamera.getMatrix(mMatrix);
+			mMatrix.preTranslate(-300, -600);
+			mMatrix.postTranslate(300, 600);
+			
 			canvas.save();
-			canvas.rotate(mTheta + i*2, (mRectangles.get(i).left + mRectangles.get(i).right)/2.0f, (mRectangles.get(i).top + mRectangles.get(i).bottom)/2.0f);
+			canvas.concat(mMatrix);			
 			canvas.drawRect(mRectangles.get(i), mPaints.get(i));
 			canvas.restore();
+			
+			mCamera.restore();
 		}
 	}
 	
@@ -130,8 +146,8 @@ public class RotateableDrawableView extends FrameLayout{
 	public void setValue(float value){
 		mAlpha = (int) MathUtils.interpolate(0, 255, value);
 		mTheta = MathUtils.interpolate(0, 360, value); 
-
-		Log.d("Rot","SetAlpha:" + mAlpha + ",setTheta:" + mTheta);
+		mHeightAbove = MathUtils.interpolate(-80, -8, value);
+		Log.d("Rot","SetAlpha:" + mAlpha + ",setTheta:" + mTheta + ",mHeightAbove:" + mHeightAbove);
 		invalidate();
 	}
 }
