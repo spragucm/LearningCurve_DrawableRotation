@@ -25,6 +25,7 @@ public class RotateableDrawableView extends FrameLayout{
 	private int mAlpha = 255;
 	private float mTheta = 0;
 	private float mHeightAbove = -80;
+	private float mScale = 1.0f;
 	
 	private List<RectF> mRectangles = new ArrayList<RectF>();
 	private List<Paint> mPaints = new ArrayList<Paint>();
@@ -57,10 +58,10 @@ public class RotateableDrawableView extends FrameLayout{
 		float left = 0;
 		float right = left + recWidth;
 		float top = 0;
-		float bottom = 1200;
+		float bottom = 1000;
 		Random rand = new Random();
 		for(int i = 0; i < num; i++){	
-			mRectangles.add(new RectF(left, top, right, bottom));
+			mRectangles.add(new RectF(left, top, left + width, bottom));
 			left += recWidth;
 			right += recWidth;
 			
@@ -105,7 +106,7 @@ public class RotateableDrawableView extends FrameLayout{
 			mMatrix.postTranslate(300, 600);
 			
 			canvas.save();
-			canvas.concat(mMatrix);			
+			canvas.concat(mMatrix);	
 			canvas.drawRect(mRectangles.get(i), mPaints.get(i));
 			canvas.restore();
 			
